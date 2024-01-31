@@ -1,67 +1,35 @@
+from typing import Any
 from rest_framework import serializers
+from users.models import User
+from course.models import Course
 
-from course.models import Category, Course, SocialApps, Interviews, CourseVideos
 
-
-class TagSerializer(serializers.ModelSerializer):
+class CourseUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
-        fields = ('title',)
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    post_count = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Category
-        fields = ('title', 'image', 'post_count')
-
-    def get_post_count(self, obj):
-        return obj.post.count()
-
-
-class SocialAppSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SocialApps
-        fields = ('instagram_url', 'tik_tok_url', 'you_tube_url', 'telegram_url', 'facebook_url')
-
-
-class InterviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Interviews
-        fields = ('title', 'image', 'read_hour', 'read_min')
+        model = User
+        fields = ("name", "first_name", "last_name")
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.title', read_only=True)
-    tag_names = serializers.SerializerMethodField(required=False, read_only=True)
+    is_buy = serializers.BooleanField()
+    buy_user = CourseUserSerializer(many=True)
+    buyers_count = serializers.IntegerField()
 
     class Meta:
         model = Course
         fields = (
-            'title', 'image', 'category', 'tag_names', 'price',
-            'rating')
+            "id",
+            "title",
+            "image",
+            "description",
+            "price",
+            "price_discount",
+            "is_buy",
+            "buy_user",
+            "buyers_count",
+        )
 
-    def get_tag_names(self, obj):
-        tags = obj.tag.all()
-        data = []
-        for i in tags:
-            data.append({'title': i.title})
-        return data
-
-
-class CourseAllSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.title', read_only=True)
-    tag_names = serializers.SerializerMethodField(required=False, read_only=True)
-
-    class Meta:
-        model = Course
-        fields = (
-            'title', 'image', 'status', 'content', 'price', 'discount',
-            'rating')
-
-
-class AboutCourseSingleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = ('title', 'image', 'content', 'videos')
+    def to_representation(self, instance: Any) -> Any:
+        json = super().to_representation(instance)
+        json["buy_user"] = json["buy_user"][:5]
+        return json

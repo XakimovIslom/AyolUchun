@@ -1,72 +1,53 @@
 from django.db import models
+from utils.models import BaseModel
+from users.models import User
 
 
-class Category(models.Model):
+class Course(BaseModel):
     title = models.CharField(max_length=211)
-    image = models.ImageField(upload_to='category/')
+    image = models.ImageField(upload_to="course/")
+    description = models.TextField(blank=True)
+    buy_user = models.ManyToManyField(User, related_name="buy_course", blank=True)
+
+    price = models.IntegerField(default=0)
+    price_discount = models.IntegerField(default=0, null=True)
 
     def __str__(self):
         return self.title
 
 
-class Tag(models.Model):
-    title = models.CharField(max_length=221)
+class Lesson(BaseModel):
+    title = models.CharField(max_length=211)
+    total_time = models.IntegerField(default=0)  # seconds, Example: 5 min = 300 sec
 
     def __str__(self):
         return self.title
 
 
-class Course(models.Model):
-    STATUS = (
-        ('sotib_olingan', 'sotib_olingan'),
-        ('sotib_olinmagan', 'sotib_olinmagan'),
-    )
-
-    title = models.CharField(max_length=221)
-    image = models.ImageField(upload_to='course/')
-    content = models.TextField()
-    status = models.CharField(max_length=21, choices=STATUS, null=True, blank=True)
-
-    # author =
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True, related_name='post')
-    tag = models.ManyToManyField(Tag, related_name='tags')
-
-    price = models.FloatField(max_length=100)
-    discount = models.FloatField(max_length=221, blank=True, null=True)
-    rating = models.FloatField(default=0)
-    # is_bought = models.BooleanField(default=False)
+class LessonUser(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    time_watched = models.IntegerField(default=0)  # 280  # seconds, Example: 5 min = 300 sec
+    total_time = models.IntegerField(default=0)  # 300  # seconds, Example: 5 min = 300 sec
 
     def __str__(self):
-        return self.title
+        return f"{self.user} - {self.lesson}"
+
+    def is_finished(self):
+        return self.total_time * 0.9 <= self.time_watched
+
+    @property
+    def status(self):
+        if self.is_finished():
+            return "finished"
+        if self.time_watched > 0:
+            return "in_progress"
+        return "not started"
 
 
-class CourseVideos(models.Model):
-    title = models.CharField(max_length=221)
-    video = models.FileField(upload_to='course-videos/')
+class LessonUserWatched(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(LessonUser, on_delete=models.CASCADE)
 
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='videos')
-
-    read_hour = models.IntegerField(null=True, blank=True)
-    read_min = models.IntegerField(null=True, blank=True)
-
-    def __str__(self):
-        return self.title
-
-
-class SocialApps(models.Model):
-    instagram_url = models.CharField(max_length=221)
-    tik_tok_url = models.CharField(max_length=221)
-    you_tube_url = models.CharField(max_length=221)
-    telegram_url = models.CharField(max_length=221)
-    facebook_url = models.CharField(max_length=221)
-
-
-class Interviews(models.Model):
-    title = models.CharField(max_length=221)
-    image = models.ImageField(upload_to='interviews/')
-    # author
-    read_hour = models.IntegerField()
-    read_min = models.IntegerField(null=True, blank=True)
-
-    def __str__(self):
-        return self.title
+    from_time = models.IntegerField(default=0)
+    to_time = models.IntegerField(default=0)

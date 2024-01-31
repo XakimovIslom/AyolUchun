@@ -1,14 +1,14 @@
 from django.db import models
 
-from course.models import Category
+# from course.models import cO
 from course.utils import BaseModel
 
 
 class Blog(BaseModel):
     title = models.CharField(max_length=221)
     author = models.CharField(max_length=221)
-    image = models.ImageField(upload_to='blog/')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="blog/")
+    # category = models.ForeignKey(Category, on_delete=models.CASCADE)
     content = models.TextField()
     views = models.IntegerField()
 

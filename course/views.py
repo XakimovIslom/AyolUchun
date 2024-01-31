@@ -1,47 +1,29 @@
+from django.db.models.query import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from course.models import Category, Course, SocialApps, Interviews, CourseVideos
-from course.serializers import CategorySerializer, SocialAppSerializer, InterviewSerializer, CourseSerializer, \
-    CourseAllSerializer, AboutCourseSingleSerializer
-
-
-class CategoryListAPIView(ListAPIView):
-    queryset = Category.objects.all().order_by('?')[:8]
-    serializer_class = CategorySerializer
-
-
-class SocialAppsListAPIView(ListAPIView):
-    queryset = SocialApps.objects.all()
-    serializer_class = SocialAppSerializer
-
-
-class InterviewListAPIView(ListAPIView):
-    queryset = Interviews.objects.all()
-    serializer_class = InterviewSerializer
+from course.models import Course
+from course.serializers import (
+    CourseSerializer,
+)
+from django.db import models
 
 
 class CourseListAPIView(ListAPIView):
-    queryset = Course.objects.all().order_by()[:3]
+    queryset = Course.objects.all()
     serializer_class = CourseSerializer
-
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_fields = ('category',)
+    filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ("category", "status")
 
     def get_queryset(self):
-        queryset = Course.objects.all()
-        category = self.request.query_params.get('category')
-        if category:
-            queryset = queryset.filter(category__title=category)
-        return queryset
-
-
-class CourseAllListAPIView(ListAPIView):
-    queryset = Course.objects.all().order_by('id')[:4]
-    serializer_class = CourseAllSerializer
-
-
-class AboutSingleCourseRetrieveAPIView(RetrieveAPIView):
-    queryset = Course.objects.all()
-    serializer_class = AboutCourseSingleSerializer
-
-
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                is_buy=models.Case(
+                    models.When(buy_user=self.request.user, then=True),
+                    default=False,
+                    output_field=models.BooleanField(),
+                ),
+                buyers_count=models.Count("buy_user"),
+            )
+        )

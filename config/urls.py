@@ -11,10 +11,10 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("users/", include("users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
-    path("course/", include("course.urls")),
-    path("blog/", include("blog.urls")),
+    path("api/v1/users/", include("users.urls", namespace="users")),
+    path("api/v1/accounts/", include("allauth.urls")),
+    path("api/v1/course/", include("course.urls")),
+    # path("api/v1/blog/", include("blog.urls")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
