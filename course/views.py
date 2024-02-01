@@ -21,18 +21,18 @@ class InterviewListAPIView(ListAPIView):
 
 
 class CourseListAPIView(ListAPIView):
-    queryset = Course.objects.all().order_by()[:3]
+    queryset = Course.objects.all().order_by()
     serializer_class = CourseSerializer
 
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_fields = ('category',)
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ('category',)
 
-    def get_queryset(self):
-        queryset = Course.objects.all()
-        category = self.request.query_params.get('category')
-        if category:
-            queryset = queryset.filter(category__title=category)
-        return queryset
+    # def get_queryset(self):
+    #     queryset = Course.objects.all()
+    #     category = self.request.query_params.get('category')
+    #     if category:
+    #         queryset = queryset.filter(category__title=category)
+    #     return queryset
 
 
 class CourseAllListAPIView(ListAPIView):

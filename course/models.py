@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class Category(models.Model):
     title = models.CharField(max_length=211)
@@ -51,6 +53,11 @@ class CourseVideos(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# class Video(models.Model):
+#     lesson = models.ForeignKey(CourseVideos, on_delete=models.CASCADE)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class SocialApps(models.Model):
