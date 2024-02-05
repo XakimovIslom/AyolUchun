@@ -14,7 +14,7 @@ urlpatterns = [
     path("api/v1/users/", include("users.urls", namespace="users")),
     path("api/v1/accounts/", include("allauth.urls")),
     path("api/v1/course/", include("course.urls")),
-    # path("api/v1/blog/", include("blog.urls")),
+    path("api/v1/blog/", include("blog.urls")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:

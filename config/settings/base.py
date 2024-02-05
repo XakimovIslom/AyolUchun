@@ -1,6 +1,7 @@
 """
 Base settings to build other settings files upon.
 """
+
 from pathlib import Path
 
 import environ
@@ -45,10 +46,14 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 # DATABASES = {"default": env.db("DATABASE_URL")}
 # DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# POSTGRES
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "ayol",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "localhost",
     }
 }
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
@@ -91,7 +96,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "users",
     "course",
-    # "blog",
+    "blog",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -123,7 +128,9 @@ PASSWORD_HASHERS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
