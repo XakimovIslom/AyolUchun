@@ -1,12 +1,19 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from course.models import Category, Course, SocialApps, Interviews, CourseVideos
-from course.serializers import CategorySerializer, SocialAppSerializer, InterviewSerializer, CourseSerializer, \
-    CourseAllSerializer, AboutCourseSingleSerializer
+
+from course.models import Category, Course, Interviews, SocialApps
+from course.serializers import (
+    AboutCourseSingleSerializer,
+    CategorySerializer,
+    CourseAllSerializer,
+    CourseSerializer,
+    InterviewSerializer,
+    SocialAppSerializer,
+)
 
 
 class CategoryListAPIView(ListAPIView):
-    queryset = Category.objects.all().order_by('?')[:8]
+    queryset = Category.objects.all().order_by("?")[:8]
     serializer_class = CategorySerializer
 
 
@@ -21,11 +28,11 @@ class InterviewListAPIView(ListAPIView):
 
 
 class CourseListAPIView(ListAPIView):
-    queryset = Course.objects.all().order_by()
+    queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ('category',)
+    filterset_fields = ("category",)
 
     # def get_queryset(self):
     #     queryset = Course.objects.all()
@@ -36,12 +43,10 @@ class CourseListAPIView(ListAPIView):
 
 
 class CourseAllListAPIView(ListAPIView):
-    queryset = Course.objects.all().order_by('id')[:4]
+    queryset = Course.objects.all().order_by("id")[:4]
     serializer_class = CourseAllSerializer
 
 
 class AboutSingleCourseRetrieveAPIView(RetrieveAPIView):
     queryset = Course.objects.all()
     serializer_class = AboutCourseSingleSerializer
-
-
