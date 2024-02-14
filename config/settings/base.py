@@ -347,3 +347,11 @@ REST_FRAMEWORK=
 SPECTACULAR_SETTINGS =
 # https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 # Your stuff...
+
+SETTINGS =
+# https://docs.djangoproject.com/en/dev/ref/settings/#form-renderer
+REST_FRAMEWORK=
+# https://www.django-rest-framework.org/api-guide/settings/
+SPECTACULAR_SETTINGS =
+# https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
+# Your stuff...
